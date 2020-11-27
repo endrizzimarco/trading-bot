@@ -1,0 +1,4 @@
+oandapyV20
+requests 
+six
+configparser
