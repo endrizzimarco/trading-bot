@@ -2,15 +2,30 @@ from oandapyV20 import API
 import configparser
 
 class Connection:
-  config = {}
+  __instance = None
   API = None
+  config = {}
+
+  @staticmethod
+  def getInstance():
+    """ Static access method """
+    if Connection.__instance == None:
+      Connection()
+    return Connection.__instance
+
 
   def __init__(self):
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    mode = config['ENV']['MODE']
-    Connection.config = config[mode]
+    """ Virtually private constructor """
+    if Connection.__instance != None:
+      raise Exception("This class is a singleton")
+    else:
+      Connection.__instance = self
 
-    enviroment = Connection.config['TYPE']
-    access_token = Connection.config['AUTH_TOKEN']
-    Connection.API = API(access_token, enviroment)
+      config = configparser.ConfigParser()
+      config.read('config.ini')
+      mode = config['ENV']['MODE']
+      self.config = config[mode]
+
+      enviroment = self.config['TYPE']
+      access_token = self.config['AUTH_TOKEN']
+      self.API = API(access_token, enviroment)

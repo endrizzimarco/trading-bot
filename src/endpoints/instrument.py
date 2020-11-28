@@ -1,10 +1,19 @@
 import oandapyV20.endpoints.instruments as instruments
 from connection import Connection
 
-def getPrices(instrument):    
-  connection = Connection()
+class Instrument:
+  conn = Connection.getInstance()
+  params = {"count": 60, "granularity": 'M1'}
+  pairs = conn.config['INSTRUMENTS']
 
-  # Request
-  params = {"count": 60, "granularity": M1}
-  r = instruments.InstrumentsCandles(instrument, params)
-  return connection.API.request(r)
+  def __init__(self, instrument):
+    self.r = instruments.InstrumentsCandles(instrument, self.params)
+    self.prices = self.conn.API.request(self.r)['candles']
+    self.curr = self.prices[0]
+    self.last = self.prices[-1]
+
+  def time(self, candle):
+    return candle['time'][11:16]
+
+  def price(self, candle):
+    return candle['mid']['o']
