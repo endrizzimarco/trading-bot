@@ -11,6 +11,7 @@ class Order:
         data = json.load(f)
         data['order']['units'] = units
         data['order']['instrument'] = instrument
+        self.data = data
       self.units = units
 
     def createOrder(self):
