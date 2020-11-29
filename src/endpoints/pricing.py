@@ -9,7 +9,7 @@ class Pricing:
   def __init__(self, instrument):
     self.q = pricing.PricingInfo(self.accountID, {"instruments": instrument})
     self.data = self.conn.API.request(self.q)['prices'][0]
-    self.unitsAvailable = self.data['unitsAvailable']['default']['long']
+    self.unitsAvailable = float(self.data['unitsAvailable']['default']['long'])
 
   def is_tradeable(self):
     return True if self.data['tradeable'] == 'True' else False

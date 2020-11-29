@@ -6,8 +6,8 @@ class Position:
   conn = Connection.getInstance()
   accountID = conn.config['ACCOUNT_ID']
 
-  r = positions.OpenPositions(accountID)
-  data = conn.API.request(r)['positions']
+  q = positions.OpenPositions(accountID)
+  data = conn.API.request(q)['positions']
 
   def __init__(self, i):
     self.pair = self.data[i]['instrument']
@@ -19,4 +19,10 @@ class Position:
   
   def is_short(self):
     return True if self.short['units'] != '0' else False
+
+  @staticmethod
+  def is_opened(pair):
+    for position in Position.data:
+      if position['instrument'] == pair:
+        return True
 
