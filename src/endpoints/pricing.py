@@ -12,4 +12,4 @@ class Pricing:
     self.unitsAvailable = float(self.data['unitsAvailable']['default']['long'])
 
   def is_tradeable(self):
-    return True if self.data['tradeable'] == 'True' else False
+    return True if self.data['tradeable'] == True else False

@@ -6,7 +6,7 @@
     "type": "MARKET",
     "positionFill": "DEFAULT",
     "trailingStopLossOnFill": {
-      "distance": "0.00050"
+      "distance": "0.005"
     }
   }
 }

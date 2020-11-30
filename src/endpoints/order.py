@@ -14,6 +14,6 @@ class Order:
         self.data = data
       self.units = units
 
-    def createOrder(self):
+    def create_order(self):
       q = orders.OrderCreate(self.accountID, self.data)
       return self.conn.API.request(q)
