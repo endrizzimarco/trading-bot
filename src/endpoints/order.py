@@ -7,7 +7,7 @@ class Order:
     accountID = conn.config['ACCOUNT_ID']
 
     def __init__(self, units, instrument):
-      with open('orderbody.json', 'r') as f:
+      with open('src/orderbody.json', 'r') as f:
         data = json.load(f)
         data['order']['units'] = units
         data['order']['instrument'] = instrument
