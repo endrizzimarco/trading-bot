@@ -67,7 +67,7 @@ def job():
         elif min < -RATE:
           units = -UNITS
         if units:
-          order = Order(str(UNITS), pair)
+          order = Order(str(units), pair)
           order.create_order()
           print(f'-> Order created for {pair} for {order.units} units\n')
         else:
