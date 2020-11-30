@@ -22,7 +22,8 @@ class Position:
 
   @staticmethod
   def is_opened(pair):
-    for position in Position.data:
+    q = positions.OpenPositions(Position.accountID)
+    for position in Connection.getInstance().API.request(q)['positions']:
       if position['instrument'] == pair:
         return True
 
