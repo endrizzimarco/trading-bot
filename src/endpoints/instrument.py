@@ -1,36 +1,32 @@
 import oandapyV20.endpoints.instruments as instruments
+import pandas as pd
 from connection import Connection
 
 class Instrument:
   conn = Connection.getInstance()
-  params = {"count": 60, "granularity": 'M1'}
-
-  def __init__(self, instrument):
-    self.q = instruments.InstrumentsCandles(instrument, self.params)
+  
+  def __init__(self, instrument, params):
+    self.q = instruments.InstrumentsCandles(instrument, params)
     self.prices = self.conn.API.request(self.q)['candles']
-    self.currPrice = self.prices[0]['mid']['o']
-    self.lastPrice = self.prices[-1]['mid']['o']
-    self.currTime = self.prices[0]['time'][11:16]
-    self.lastTime = self.prices[-1]['time'][11:16]
+    self.df = self.__to_df()
 
-  def max_min_subsequence(self):
-    openPrices = [float(price['mid']['o']) for price in self.prices]
-    priceChange = [round(openPrices[i+1]-openPrices[i], 5) for i in range(len(openPrices)-1)]
-    maxSoFar = 0
-    minSoFar = 0
-    maxToHere = 0
-    minToHere = 0
 
-    for i in range(len(priceChange)):
-      maxToHere += priceChange[i]
-      minToHere += priceChange[i]
-      if maxToHere < 0:
-        maxToHere = 0
-      if minToHere > 0:
-        minToHere = 0
-      if maxSoFar < maxToHere:
-        maxSoFar = maxToHere
-      if minSoFar > minToHere:
-        minSoFar = minToHere
+  def __to_df(self):
+    if not(self.prices):
+      return None
 
-    return int((maxSoFar*10**5)), int((minSoFar*10**5))
+    df = pd.DataFrame.from_dict(self.prices)
+    df.drop('complete', axis=1, inplace=True, errors='ignore')
+
+    df['time'] = df['time'].astype('datetime64[s]')
+    df = df.set_index('time').rename_axis(None)
+
+    df = pd.concat([df.drop(['mid'], axis=1), df['mid'].apply(pd.Series)], axis=1)
+    df.columns = ['Volume', 'Open', 'High', 'Low', 'Close']
+    df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
+
+    df = df.apply(pd.to_numeric) 
+    
+    return df
+
+
