@@ -4,5 +4,4 @@ six
 configparser
 schedule
 backtesting
-mplfinance
-matplotlib
+newtulipy
