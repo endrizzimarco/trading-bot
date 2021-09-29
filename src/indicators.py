@@ -102,3 +102,12 @@ def print_info(indicator):
 def macd(input, short, long, signal):
     macd, macd_signal, macd_histogram = ti.macd(input, short, long, signal)
     return macd
+
+def rsi(input, n):
+    rsi = ti.rsi(input, n)
+    return make_same_length(rsi, n)
+
+def make_same_length(res_array, n):
+    nan_array = np.empty(n)
+    nan_array[:] = np.NaN
+    return np.concatenate([nan_array, res_array])
