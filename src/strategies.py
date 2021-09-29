@@ -91,6 +91,35 @@ class DippinStreaks(Strategy):
             ):
                 self.buy(size=30000) if self.buyStreak else self.sell(size=30000)
 
+class RSI_Momentum(Strategy):
+    tp_long = 65
+    tp_short = 35
+    long_signal = 75
+    short_signal = 25
+
+    stall_counter = 0
+
+
+    def init(self):
+        self.rsi = self.I(rsi, self.data.Close, 14)
+
+    def next(self):
+        if self.position:
+            if (self.position.is_long and self.rsi[-1] > self.tp_long) or (self.position.is_short and self.rsi[-1] < self.tp_short):
+                self.position.close()
+            # If you fucked up go to prison for 24 turns
+            if self.closed_trades and  self.closed_trades[-1].pl < 0:
+                self.stall_counter = 24
+        else:
+            if (self.stall_counter): 
+                self.stall_counter -= 1
+                return 
+            # BUY CONDITIONS
+            if (self.rsi[-1] < self.short_signal):
+                self.buy(size=30000)
+            # SELL CONDITIONS
+            elif (self.rsi[-1] > self.long_signal):
+                self.sell(size=30000)
 
 # https://www.investopedia.com/terms/i/ichimoku-cloud.asp
 class Ichimoku(Strategy):
@@ -100,7 +129,6 @@ class Ichimoku(Strategy):
         self.senkouSpanA = self.I(senkouSpanA, self.data)
         self.senkouSpanB = self.I(senkouSpanB, self.data)
         self.chikouSpan = self.I(chikouSpan, self.data)
-        self.macd = self.I(macd, self.data.Close, 12, 26, 9)
 
     def next(self):
         if self.senkouSpanA[-1] > self.senkouSpanB[-1]:
