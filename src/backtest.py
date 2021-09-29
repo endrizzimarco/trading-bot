@@ -64,25 +64,26 @@ def backtest(pair, startDate, endDate, granularity, freq, strategy, optimize):
         )
 
 
-backtest("EUR_USD", "2017-01-01", "2021-01-01", "H1", "M", Ichimoku, 0)
+# backtest("EUR_USD", "2017-01-01", "2021-01-01", "H1", "BQS", Ichimoku, 0)
 
 
 # Below is to test a single period of time without having to append all the dates
 # Problem is that the API has a maximum number of candles per query
 
-# bt = Backtest(
-#     Instrument(
-#         "EUR_USD",
-#         params={"from": "2016-12-10", "to": "2018-02-01", "granularity": "H4"},
-#     ).df,
-#     Ichimoku,
-#     cash=100000,
-#     commission=0,
-# )
+bt = Backtest(
+    Instrument(
+        "EUR_USD",
+        params={"from": "2016-12-30", "to": "2017-04-03", "granularity": "H1"},
+    ).df,
+    Ichimoku,
+    cash=100000,
+    commission=0,
+)
 
-# stats = bt.run()
-# print(stats)
-# print(stats._trades.tail(40))
+stats = bt.run()
+print(stats)
+print(stats._trades.tail(40))
+bt.plot()
 
 # stats = bt.optimize(
 #                     threshold=range(5, 50, 1),

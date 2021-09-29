@@ -100,13 +100,23 @@ class Ichimoku(Strategy):
         self.senkouSpanA = self.I(senkouSpanA, self.data)
         self.senkouSpanB = self.I(senkouSpanB, self.data)
         self.chikouSpan = self.I(chikouSpan, self.data)
+        self.macd = self.I(macd, self.data.Close, 12, 26, 9)
 
     def next(self):
+        if self.senkouSpanA[-1] > self.senkouSpanB[-1]:
+            bigCloud = self.senkouSpanA
+            smallCloud = self.senkouSpanB
+        else:
+            bigCloud = self.senkouSpanB
+            smallCloud = self.senkouSpanA
+
         if self.position:
             if (
                 self.position.is_long
                 and self.tenkanSen[-1] < self.kijunSen[-1]
-                and self.data.Close[-1] < self.kijunSen[-1]
+                and self.data.Close[-1] < self.tenkanSen[-1]
+                and self.data.Close[-1] < smallCloud[-1]
+                # and self.chikouSpan[-27] < self.data.Close[-27]
             ):
                 self.position.close()
 
@@ -114,21 +124,27 @@ class Ichimoku(Strategy):
                 self.position.is_short
                 and self.tenkanSen[-1] > self.kijunSen[-1]
                 and self.data.Close[-1] > self.kijunSen[-1]
+                and self.data.Close[-1] < bigCloud[-1]
+                # and self.chikouSpan[-27] > self.data.Close[-27]
             ):
                 self.position.close()
 
         else:
             # BUY CONDITIONS
             if (
-                self.tenkanSen[-1] > self.kijunSen[-1]
-                and self.data.Close[-1] > self.kijunSen[-1]
-                and self.chikouSpan[-1] > self.data.Close[-1]
+                self.chikouSpan[-27] > self.tenkanSen[-1]
+                and self.data.Close[-1] > self.tenkanSen[-1]
+                and self.tenkanSen[-1] > self.kijunSen[-1]
+                and self.kijunSen[-1] > self.senkouSpanA[-1]
+                and self.senkouSpanA[-1] > self.senkouSpanB[-1]
             ):
                 self.buy(size=30000)
             # SELL CONDITIONS
             elif (
-                self.tenkanSen[-1] < self.kijunSen[-1]
-                and self.data.Close[-1] < self.kijunSen[-1]
-                and self.chikouSpan[-1] < self.data.Close[-1]
+                self.chikouSpan[-27] < self.tenkanSen[-1]
+                and self.data.Close[-1] < self.tenkanSen[-1]
+                and self.tenkanSen[-1] < self.kijunSen[-1]
+                and self.kijunSen[-1] < self.senkouSpanA[-1]
+                and self.senkouSpanA[-1] < self.senkouSpanB[-1]
             ):
                 self.sell(size=30000)

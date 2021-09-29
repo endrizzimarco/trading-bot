@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import tulipy as ti
 
 # Min and max subsequences of candles
 
@@ -76,3 +78,27 @@ def senkouSpanB(df):
 
 def chikouSpan(df):
     return pd.Series(df.Close).shift(-26)
+
+
+# Moving averages
+
+
+def SMA(closePrices, n):
+    return pd.Series(closePrices).rolling(n).mean()
+
+
+def EMA(closePrices, n):
+    return pd.Series(closePrices).ewm(span=n).mean()
+
+
+def print_info(indicator):
+    print("Type:", indicator.type)
+    print("Full Name:", indicator.full_name)
+    print("Inputs:", indicator.inputs)
+    print("Options:", indicator.options)
+    print("Outputs:", indicator.outputs)
+
+
+def macd(input, short, long, signal):
+    macd, macd_signal, macd_histogram = ti.macd(input, short, long, signal)
+    return macd
