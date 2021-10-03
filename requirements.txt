@@ -5,3 +5,5 @@ configparser
 schedule
 backtesting
 newtulipy
+PyQt5
+PyQtWebEngine
